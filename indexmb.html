@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="coloris.css"/>
+<link rel="stylesheet" href="style.css"/>
+<script src="coloris.js"></script>
+<script src="reconnecting-websocket.min.js"></script>
+<script src="WebSocketClientMB.js"></script>
+<script src="Helper.js"></script>
+<script src="ShortCuts.js"></script>
+<script src="mbconfig.js"></script>
+<script src="ParamToggleHandlersMB.js"></script>
+<script src="storageHelper.js"></script>
+<script src="configHelper.js"></script>
+<script src="appMB.js"></script>
+<body onload="init()">
+  <div id="controller">
+<!--S-->
+    <svg width="100%"
+         style="border: 0px solid red;"
+         viewBox="0 0 2000 500"
+         preserveAspectRatio="xMidYMid meet">
+         <image id="controllerimg" xlink:href="mb_mike.png" x="0" y="0"/>
+         <text class="btn" id="btn1" x=845 y=225>Dipole</text>
+         <text class="btn" id="btn2" x=960 y=225>Optibeam</text>
+         <text class="btn" id="btn3" x=1075 y=225>Vertical</text>
+         <text class="btn" id="btn4" x=1190 y=225>Dipole 80m</text>
+         <image id="ledPtt" xlink:href="red_off.png" x="683" y="190" height="25px" width="25px"/>
+         <image id="ledMode" xlink:href="ringoff.png" x="670" y="101" height="54px" width="54px"/>
+         <image id="led0" xlink:href="ringoff.png" x="868" y="101" height="54px" width="54px"/>
+         <image id="led1" xlink:href="ringoff.png" x="984" y="101" height="54px" width="54px"/>
+         <image id="led2" xlink:href="ringoff.png" x="1097" y="101" height="54px" width="54px"/>
+         <image id="led3" xlink:href="ringoff.png" x="1214" y="101" height="54px" width="54px"/>
+         <circle cx="83" cy="239" r="15" opacity="0" style="cursor: pointer;" onclick="toggleRemote()">
+          <title>Remote LED Orange: Activated. Yellow: Only external relay.</title>
+         </circle>         
+ 
+         <image id="iconfig" xlink:href="iconfig.png" x="60" y="260" height="45px" width="45px"/>
+         <circle cx="83" cy="282" r="25" opacity="0" style="fill: red; cursor: pointer;" onclick="toggleConfig()">
+          <title>Open/Close config menu</title>
+         </circle>
+
+         <circle id="activity" cx="83" cy="240" r="5" opacity="1" style="fill: rgb(0, 80, 0);">
+          <title>Activity ahead</title>
+         </circle>
+
+         <rect id="rect1" x=665 y=100 width="60" height="60" opacity="0" onclick="fireMode()" style="cursor: pointer;">
+          <title>Click for Mode</title>
+         </rect>                 
+
+         <rect id="rect1" x=838 y=100 width="110" height="150" opacity="0" onclick="fireButton(0)" style="cursor: pointer;">
+          <title>Click for Button 1</title>
+         </rect>                 
+         <rect id="rect2" x=955 y=100 width="110" height="150" opacity="0" onclick="fireButton(1)" style="cursor: pointer;">
+          <title>Click for Button 2</title>
+         </rect>                 
+         <rect id="rect3" x=1070 y=100 width="110" height="150" opacity="0" onclick="fireButton(2)" style="cursor: pointer;">
+          <title>Click for Button 3</title>
+         </rect>                 
+         <rect id="rect4" x=1184 y=100 width="110" height="150" opacity="0" onclick="fireButton(3)" style="cursor: pointer;">
+          <title>Click for Button 4</title>
+         </rect>
+         <text x="220" y="205" opacity="0.2" style="font-size: 3vw;" transform="rotate(-90) translate(-515 1145)" id="devicename"></text>
+         
+         <text x="135" y="170" opacity="0.6" style="font-size: 27px;" id="line0">RX: </text>                                  
+         <text x="135" y="210" opacity="0.6" style="font-size: 27px;" id="line1">TX: </text>                                  
+
+    </svg>
+  </div>
+  <div class="grid-container" id="container">
+    <div class="title" id="configuration" style="display: none; background-color: #5a002c; color:white">Configuration</div>
+    <div style="display: none; grid-column-start: 1; grid-column-end: span 8" id="configPanel">
+      <label class="whiteText">Id of your device:</label>
+      <input type="text" id="myid" size="50">
+      <button onclick="updateId()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">IP-Address of your Controller:</label>
+      <input type="text" id="deviceIp" size="50">
+      <button onclick="findDevice()">
+        Find Device
+      </button>
+      <button onclick="updateIp()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Change your internal Labels:</label>
+      <input type="text" id="label1" size="10">
+      <input type="text" id="label2" size="10">
+      <input type="text" id="label3" size="10">
+      <input type="text" id="label4" size="10">
+      <button onclick="updateLabels()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Space to the left of the internal Labels for alignment:</label>
+      <input type="text" id="off1" size="5">
+      <input type="text" id="off2" size="5">
+      <input type="text" id="off3" size="5">
+      <input type="text" id="off4" size="5">
+      <button onclick="updatePosition()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Size of the Controller internal Labels:</label>
+      <input type="text" id="fs" size="5">
+      <button onclick="updateFontSize()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Color of the Controller internal Labels:</label>
+      <input id="fcol" type="text" size="10" data-coloris value="Darkgrey">
+      <button onclick="updateFontCol()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Mode of Multibeaming Web</label>
+      <input type="radio" id="mb" name="cmode" value="0" checked><span>MultiBeaming/SM1_3</span>
+      <input type="radio" id="rmb" name="cmode" value="1"><span>InvertedMultiBeaming/SM1_3</span>
+      <input type="radio" id="sj2w" name="cmode" value="2"><span>SJ2W_MultiBeaming/SM1_3</span>
+      <input type="radio" id="sm2" name="cmode" value="3"><span>SM1_2</span>
+
+      <br/>
+      <br/>
+      <label class="whiteText">Configure Controller-Hardware (use only to configure your hardware, not the ui):</label><br/>
+      <span style="color:greenyellow">I am using a </span><input type="radio" id="" name="model" value="0" checked><span>QRO.cz Controller</span>
+      <input type="radio" id="" name="model" value="1"><span>QRO.cz Controller Inverted </span>
+      <input type="radio" id="" name="model" value="2"><span>Others (SJ2W_Mode)</span><br/>
+      <span style="color:greenyellow">set to </span><input type="radio" id="" name="type" value="1" checked><span>MultiBeaming</span>
+      <input type="radio" id="" name="type" value="2"><span>SM1_3</span>
+      <input type="radio" id="" name="type" value="3"><span>SM1_2</span><br/>
+      <button onclick="writetocontroller()">
+        Write to hardware
+      </button>
+      <button onclick="showhardware()">
+        Show current hardware config
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Change in case of networking issues:</label>
+      <br/>
+      <input type="checkbox" id="forceHttp"><span>Use HTTP-Mode</span>
+      <br/>
+      <br/>
+      <span>Set custom Timeout (in Milliseconds, Default: 2000): </span><input type="text" id="socketTimeout" size="10">
+      <br/>
+      <br/>
+      <label class="whiteText">Use this Link/Storage to your Controller:</label>
+      <input id="genLink" type="text" size="180">
+      <button onclick="generateLink()">
+        Generate Link
+      </button>
+      <button onclick="openUrl()">
+        Open from link
+      </button>
+      <p><div style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: white">copyright 2018 by Michael Mueller for qro.cz | All rights reserved -- wiki at <a href="https://hamparts.shop/blog" taget="blank">hamparts.shop/blog</a></div>
+      <!--copyright 2018 by Michael Müller. All rights reserved. This code is NOT open source. The provided functionality is only allowed to be used with qro.cz/hamparts.shop hardware. Violations of this license agreement will be prosecuted. -->  
+    </div>
+<!--S-->
+</div>
+</body>
+</html>

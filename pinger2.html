@@ -1,0 +1,132 @@
+<html>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js"></script>
+    <title>remoteBase</title>
+<style>
+body {
+ background-color: #000000;
+ font-size: 20px;
+ font-family: Arial, Helvetica, sans-serif;
+ color: aliceblue;
+}
+input[type="text"] {
+  width: 30%;
+  padding: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  background-color: #111111;
+  color: #ffffff;
+  font-size: 1vw;
+}
+</style>
+</head>
+    
+<body>
+    <h1>&nbsp; Pinger v1 - Find your switch!</h1>
+    <span for="ipmask" id="LabelCustomerID">Find your switch: Specify the first 3 octets of your ip, not all 4 (e.g. 192.168.0, or 192.168.1,...): </span>
+    <input type="text" name="ipmask" id="ipmask" size="50">
+    <span for="port" id="LabelPort">Port: </span>
+    <input style="width:40" type="text" name="port" id="port" value="59">
+    <span for="start" id="LabelStart">Search from: </span>
+    <input style="width:40" type="text" name="start" id="start">
+    <span for="stopt" id="LabelStop">Search until: </span>
+    <input style="width:40" type="text" name="stop" id="stop">
+    <button onclick="reloadIt()">Fire!</button>
+    <div><a href="https://www.sas.upenn.edu/~jasonrw/HowTo-FindIP.htm" target=_blank>HowTo find your IP</a></div>
+    <ul data-bind="foreach:servers">
+        <li> <a href="#" data-bind="text:name,attr:{href: 'http://'+name}" target="_blank">tester</a> <span data-bind="text:status,css:status"></span>
+        </li>
+    </ul>
+    <br/>
+	<br/>
+    <h1 style="background-color:#660033">&nbsp;</h1>
+    <div>
+        <span style="color: #555555">Help needed? Here is additional information: <a style="color: #555555" href="http://logic.qro.cz/logic/Manager/manual_pinger.pdf" target=_blank>Tips using Pinger</a>
+    </div>
+
+<script>
+var divEr = document.getElementById('list');
+let ipmask = document.getElementById("ipmask").value;
+let port = document.getElementById("port").value;
+let pstart = document.getElementById("start").value;
+let pstop = document.getElementById("stop").value;
+
+function ping(ip, callback) {
+    if (!this.inUse) {
+        this.status = 'unchecked';
+        this.inUse = true;
+        this.callback = callback;
+        this.ip = ip+":"+port+"/index";
+        var _that = this;
+        this.img = new Image();
+        this.img.onload = function () {
+            _that.inUse = false;
+            _that.callback('responded');
+
+        };
+        this.img.onerror = function (e) {
+            if (_that.inUse) {
+                _that.inUse = false;
+                _that.callback('responded', e);
+            }
+
+        };
+        this.start = new Date().getTime();
+        this.img.src = "http://" + ip;
+        this.timer = setTimeout(function () {
+            if (_that.inUse) {
+                _that.inUse = false;
+                _that.callback('timeout');
+            }
+        }, 2000);
+    }
+}
+
+var PingModel = function (servers) {
+    var self = this;
+    var myServers = [];
+    ko.utils.arrayForEach(servers, function (location) {
+        myServers.push({
+            name: location,
+            status: ko.observable('unchecked')
+        });
+    });
+    self.servers = ko.observableArray(myServers);
+    ko.utils.arrayForEach(self.servers(), function (s) {
+        s.status('checking');
+        new ping(s.name, function (status, e) {
+            s.status(status);
+        });
+    });
+};
+
+function createKoModel()
+{
+    let modelarray = [];
+
+    let indexer = 0;
+    for(let i=pstart; i < pstop; ++i)
+    {
+        modelarray[indexer] = ipmask + "."+i+":" + port + "/index";
+        indexer++;
+    } 
+
+    console.log(modelarray.length);
+    return modelarray;
+}
+
+var komodel = new PingModel(createKoModel());
+ko.applyBindings(komodel);
+
+function reloadIt()
+{
+    location.reload();
+}
+
+</script>
+</body>
+</html>

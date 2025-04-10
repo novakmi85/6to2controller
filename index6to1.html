@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="coloris.css"/>
+<link rel="stylesheet" href="style.css"/>
+<script src="coloris.js"></script>
+<script src="reconnecting-websocket.min.js"></script>
+<script src="WebSocketClient.js"></script>
+<script src="Helper.js"></script>
+<script src="ShortCuts.js"></script>
+<script src="ParamToggleHandlers.js"></script>
+<script src="storageHelper.js"></script>
+<script src="configHelper.js"></script>
+<script src="app6to1.js"></script>
+<body onload="init()">
+<div id="controller">
+<!--S-->
+    <svg width="100%"
+         style="border: 0px solid red;"
+         viewBox="0 0 2000 500"
+         preserveAspectRatio="xMidYMid meet">
+         <image id="controllerimg" xlink:href="6-1.png" x="0" y="0"/>
+         <text class="btn" id="btn1" x=470 y=136>Dipole</text>
+         <text class="btn" id="btn2" x=670 y=136>Optibeam</text>
+         <text class="btn" id="btn3" x=880 y=136>Vertical</text>
+         <text class="btn" id="btn4" x=470 y=303>Dipole 80m</text>
+         <text class="btn" id="btn5" x=670 y=303>Zepp</text>
+         <text class="btn" id="btn6" x=880 y=303>ukw</text>
+         <image id="ledPtt" xlink:href="red_off.png" x="1139" y="166" height="42px" width="42px"/>
+         <image id="ledRemote" xlink:href="orange_off.png" x="1145" y="333" height="42px" width="42px"/>
+         <image id="led0" xlink:href="green_off.png" x="518" y="166" height="42px" width="42px"/>
+         <image id="led1" xlink:href="green_off.png" x="721" y="167" height="42px" width="42px"/>
+         <image id="led2" xlink:href="green_off.png" x="931" y="166" height="42px" width="42px"/>
+         <image id="led3" xlink:href="green_off.png" x="518" y="335" height="42px" width="42px"/>
+         <image id="led4" xlink:href="green_off.png" x="723" y="334" height="42px" width="42px"/>
+         <image id="led5" xlink:href="green_off.png" x="931" y="335" height="42px" width="42px"/>
+         <circle cx="245" cy="275" r="115" opacity="0" style="cursor: pointer;" onclick="toggleRemote()">
+          <title>Remote LED Orange: Activated. Yellow: Only external relay.</title>
+         </circle>         
+
+         <image id="iconfig" xlink:href="iconfig.png" x="120" y="380" height="45px" width="45px"/>
+         <circle cx="143" cy="402" r="25" opacity="0" style="fill: silver;cursor: pointer;" onclick="toggleConfig()">
+          <title>Open/Close config menu</title>
+         </circle>
+         
+         <image id="iexternal" xlink:href="iexternal.png" x="60" y="380" height="45px" width="45px"/>
+         <circle cx="83" cy="402" r="25" opacity="0" style="fill: red; cursor: pointer;" onclick="toggleExternalRelays()">
+          <title>Open/Close external relay menu</title>
+         </circle>
+
+         <circle id="activity" cx="85" cy="360" r="5" opacity="1" style="fill: rgb(0, 80, 0);">
+          <title>Activity ahead</title>
+         </circle>
+
+         <rect id="rect1" x=453 y=100 width="170" height="55" opacity="0" onclick="fireButton(0)" style="fill: red; cursor: pointer;">
+          <title>Click for Button 1</title>
+         </rect>                 
+         <rect id="rect2" x=660 y=100 width="170" height="55" opacity="0" onclick="fireButton(1)" style="fill: red; cursor: pointer;">
+          <title>Click for Button 2</title>
+         </rect>                 
+         <rect id="rect3" x=865 y=100 width="170" height="55" opacity="0" onclick="fireButton(2)" style="fill: red; cursor: pointer;">
+          <title>Click for Button 3</title>
+         </rect>                 
+         <rect id="rect4" x=456 y=265 width="170" height="55" opacity="0" onclick="fireButton(3)" style="fill: red; cursor: pointer;">
+          <title>Click for Button 4</title>
+         </rect>                 
+         <rect id="rect5" x=660 y=265 width="170" height="55" opacity="0" onclick="fireButton(4)" style="fill: red; cursor: pointer;">
+          <title>Click for Button 5</title>
+        </rect>                 
+        <rect id="rect6" x=865 y=265 width="170" height="55" opacity="0" onclick="fireButton(5)" style="fill: red; cursor: pointer;">
+          <title>Click for Button 6</title>
+        </rect>
+        <text x="100" y="200" opacity="0.2" style="font-size: 3vw;" transform="rotate(-90) translate(-515 1145)" id="devicename"></text>                 
+    </svg>
+  </div>
+  <div class="grid-container" id="container">
+    <div class="title" id="menu">External Relays</div>
+    <div class="xxButton" id="btn8" title="Click for Button 8" onclick="fireButton(8)"><div class="divTableCell">Ant 8</div></div>
+    <div class="xxButton" id="btn9" title="Click for Button 9" onclick="fireButton(9)"><div class="divTableCell">Ant 9</div></div>
+    <div class="xxButton" id="btn10" title="Click for Button 10" onclick="fireButton(10)"><div class="divTableCell">Ant 10</div></div>
+    <div class="xxButton" id="btn11" title="Click for Button 11" onclick="fireButton(11)"><div class="divTableCell">Ant 11</div></div>
+    <div class="xxButton" id="btn12" title="Click for Button 12" onclick="fireButton(12)"><div class="divTableCell">Ant 12</div></div>
+    <div class="xxButton" id="btn13" title="Click for Button 13" onclick="fireButton(13)"><div class="divTableCell">Ant 13</div></div>
+    <div class="xxButton" id="btn14" title="Click for Button 14" onclick="fireButton(14)"><div class="divTableCell">Ant 14</div></div>
+    <div class="xxButton" id="btn15" title="Click for Button 15" onclick="fireButton(15)"><div class="divTableCell">Ant 15</div></div>
+    <p></p>
+    <div class="title" id="configuration" style="display: none; background-color: #5a002c; color:white">Configuration</div>
+    <div style="display: none; grid-column-start: 1; grid-column-end: span 8" id="configPanel">
+      <label class="whiteText">Id of your device:</label>
+      <input type="text" id="myid" size="50">
+      <button onclick="updateId()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">IP-Address of your Controller:</label>
+      <input type="text" id="deviceIp" size="50">
+      <button onclick="findDevice()">
+        Find Device
+      </button>
+      <button onclick="updateIp()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Change your internal Labels:</label>
+      <input type="text" id="label1" size="10">
+      <input type="text" id="label2" size="10">
+      <input type="text" id="label3" size="10">
+      <input type="text" id="label4" size="10">
+      <input type="text" id="label5" size="10">
+      <input type="text" id="label6" size="10">
+      <button onclick="updateLabels()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Space to the left of the internal Labels for alignment:</label>
+      <input type="text" id="off1" size="5">
+      <input type="text" id="off2" size="5">
+      <input type="text" id="off3" size="5">
+      <input type="text" id="off4" size="5">
+      <input type="text" id="off5" size="5">
+      <input type="text" id="off6" size="5">
+      <button onclick="updatePosition()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Size of the Controller internal Labels:</label>
+      <input type="text" id="fs" size="5">
+      <button onclick="updateFontSize()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Color of the Controller internal Labels:</label>
+      <input id="fcol" type="text" size="10" data-coloris value="Darkgrey">
+      <button onclick="updateFontCol()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Change your Labels for external Relays:</label>
+      <input type="text" id="label8" size="10">
+      <input type="text" id="label9" size="10">
+      <input type="text" id="label10" size="10">
+      <input type="text" id="label11" size="10">
+      <input type="text" id="label12" size="10">
+      <input type="text" id="label13" size="10">
+      <input type="text" id="label14" size="10">
+      <input type="text" id="label15" size="10">
+      <button onclick="updateExtLabels()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Change in case of networking issues:</label>
+      <br/>
+      <input type="checkbox" id="forceHttp"><span>Use HTTP-Mode</span>
+      <br/>
+      <br/>
+      <span>Set custom Timeout (in Milliseconds, Default: 2000): </span><input type="text" id="socketTimeout" size="10">
+      <br/>
+      <br/>
+      <label class="whiteText">Use this Link/Storage to your Controller:</label>
+      <input id="genLink" type="text" size="180">
+      <button onclick="generateLink()">
+        Generate Link
+      </button>
+      <!-- <button onclick="storeLocal()">
+        Store in local storage
+      </button>
+      <button onclick="deleteLocal()">
+        Delete local storage
+      </button> -->
+      <button onclick="openUrl()">
+        Open from link
+      </button>
+      <!-- <button onclick="openStorage()">
+        Open from local storage
+      </button> -->
+      <p><div style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: white">copyright 2018 by Michael Mueller for qro.cz | All rights reserved -- wiki at <a href="https://hamparts.shop/blog" taget="blank">hamparts.shop/blog</a></div>
+      <!--copyright 2018 by Michael Müller. All rights reserved. This code is NOT open source. The provided functionality is only allowed to be used with qro.cz/hamparts.shop hardware. Violations of this license agreement will be prosecuted. -->  
+    </div>
+<!--S-->
+</div>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<html>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="stylesheet" href="style.css">
+    <title>remoteBase</title>
+<style>
+body {
+ background-color: #000000;
+ font-size: 20px;
+ font-family: Arial, Helvetica, sans-serif;
+ color: aliceblue;
+}
+input[type="text"] {
+  width: 30%;
+  padding: 2px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  resize: vertical;
+  background-color: #111111;
+  color: #ffffff;
+  font-size: 1vw;
+}
+</style>
+</head>
+    
+<body>
+    <h1>&nbsp; Pinger v2 - Find your switch!</h1>
+    <span for="ipmask" id="LabelCustomerID">Find your switch: Specify the first 3 octets of your ip, not all 4 (e.g. 192.168.0, or 192.168.1,...): </span>
+    <input type="text" name="ipmask" id="ipmask" size="50" value="192.168.">
+    <span for="start" id="LabelStart">Search from: </span>
+    <input style="width:40" type="text" name="start" id="start" value="1">
+    <span for="stopt" id="LabelStop">Search until: </span>
+    <input style="width:40" type="text" name="stop" id="stop" value="254">
+    <button onclick="fire()">Fire!</button>
+    <div><a href="https://www.sas.upenn.edu/~jasonrw/HowTo-FindIP.htm" target=_blank>HowTo find your IP</a></div>
+    <ul id="uli"></ul>
+    <br/>
+	<br/>
+    <h1 style="background-color:#660033">&nbsp;</h1>
+    <div>
+        <span style="color: #555555">Help needed? Here is additional information: <a style="color: #555555" href="http://logic.qro.cz/logic/Manager/manual_pinger.pdf" target=_blank>Tips using Pinger</a>
+    </div>
+
+<script>
+
+let counter = 0;
+
+function fire()
+{
+    document.getElementById("uli").textContent = '';
+
+    let ipmask = document.getElementById("ipmask").value;
+    let pstart = document.getElementById("start").value;
+    let pstop = document.getElementById("stop").value;
+
+    for(let a = pstart; a <= pstop; a++)
+    {
+        ping(ipmask+"."+a);
+    }
+}
+
+function ping(ip) {
+    var a = new XMLHttpRequest();
+
+    a.open("GET", "http://"+ip+":59/ESPStatus");
+    a.send(null);
+
+    a.onreadystatechange = function () {
+
+        if (a.readyState === a.DONE) {
+            if(a.response != "")
+                addFoundElm((a.responseURL).split("/ESP")[0]);
+       }  
+    };
+}
+
+function addFoundElm(ip)
+{
+    var ul = document.getElementById("uli");
+    var li = document.createElement("li");
+    li.appendChild(document.createTextNode(ip));
+    ul.appendChild(li);
+}
+
+</script>
+</body>
+</html>

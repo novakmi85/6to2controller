@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<link rel="stylesheet" href="coloris.css"/>
+<link rel="stylesheet" href="style.css"/>
+<script src="coloris.js"></script>
+<script src="app6by2.js"></script>
+<script src="reconnecting-websocket.min.js"></script>
+<script src="WebSocketClient.js"></script>
+<script src="WebSocketClient6by2.js"></script>
+<script src="Helper.js"></script>
+<script src="ShortCuts.js"></script>
+<script src="ParamToggleHandlers6by2.js"></script>
+<script src="storageHelper.js"></script>
+<script src="configHelper6by2.js"></script>
+<script>
+</script>
+<body onload="init()">
+  <div id="controller">
+<!--S-->
+    <svg width="100%"
+         style="border: 0px solid red;"
+         viewBox="0 0 2000 500"
+         preserveAspectRatio="xMidYMid meet">
+         <image id="controllerimg" xlink:href="6-2.png" x="0" y="0"/>
+         <text class="btn" id="btn1" x=50 y=350>Dipole</text>
+         <text class="btn" id="btn2" x=205 y=350>Optibeam</text>
+         <text class="btn" id="btn3" x=360 y=350>Vertical</text>
+         <text class="btn" id="btn4" x=515 y=350>Dipole 80m</text>
+         <text class="btn" id="btn5" x=675 y=350>Zepp</text>
+         <text class="btn" id="btn6" x=830 y=350>ukw</text>
+         <image id="ledPtt1" xlink:href="red_off.png" x="1220" y="78" height="42px" width="42px"/>
+         <image id="ledPtt2" xlink:href="red_off.png" x="1220" y="216" height="42px" width="42px"/>
+         <image id="led6" xlink:href="orange_off.png" x="1102" y="78" height="42px" width="42px"/>
+         <image id="led14" xlink:href="orange_off.png" x="1102" y="216" height="42px" width="42px"/>
+         <image id="led0" xlink:href="ringoff.png" x="84" y="66" height="56px" width="56px"/>
+         <image id="led1" xlink:href="ringoff.png" x="244" y="66" height="56px" width="56px"/>
+         <image id="led2" xlink:href="ringoff.png" x="401" y="66" height="56px" width="56px"/>
+         <image id="led3" xlink:href="ringoff.png" x="558" y="66" height="56px" width="56px"/>
+         <image id="led4" xlink:href="ringoff.png" x="714" y="66" height="56px" width="56px"/>
+         <image id="led5" xlink:href="ringoff.png" x="871" y="66" height="56px" width="56px"/>
+         <image id="led8" xlink:href="ringoff.png" x="84" y="210" height="56px" width="56px"/>
+         <image id="led9" xlink:href="ringoff.png" x="244" y="210" height="56px" width="56px"/>
+         <image id="led10" xlink:href="ringoff.png" x="401" y="210" height="56px" width="56px"/>
+         <image id="led11" xlink:href="ringoff.png" x="558" y="210" height="56px" width="56px"/>
+         <image id="led12" xlink:href="ringoff.png" x="714" y="210" height="56px" width="56px"/>
+         <image id="led13" xlink:href="ringoff.png" x="871" y="210" height="56px" width="56px"/>
+         
+         <image id="iconfig" xlink:href="iconfig.png" x="1290" y="390" height="45px" width="45px"/>
+         <circle cx="1312" cy="412" r="25" opacity="0" style="fill: silver;cursor: pointer;" onclick="toggleConfig()">
+          <title>Open/Close config menu</title>
+         </circle>
+         
+         <circle id="activity" cx="1265" cy="410" r="5" opacity="1" style="fill: rgb(0, 80, 0);">
+          <title>Activity ahead</title>
+         </circle>
+
+        <circle id="circ11" cx="113" cy="94" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(1,0)">
+          <title>Click for Radio A Button 1</title>
+        </circle>                 
+        <circle id="circ12" cx="272" cy="94" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(1,1)">
+          <title>Click for Radio A Button 2</title>
+        </circle>                 
+        <circle id="circ13" cx="429" cy="94" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(1,2)">
+          <title>Click for Radio A Button 3</title>
+        </circle>                 
+        <circle id="circ14" cx="586" cy="94" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(1,3)">
+          <title>Click for Radio A Button 4</title>
+        </circle>                 
+        <circle id="circ15" cx="743" cy="94" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(1,4)">
+          <title>Click for Radio A Button 5</title>
+        </circle>                 
+        <circle id="circ16" cx="900" cy="94" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(1,5)">
+          <title>Click for Radio A Button 6</title>
+        </circle>
+        <circle id="circ21" cx="113" cy="238" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(2,0)">
+          <title>Click for Radio B Button 1</title>
+        </circle>                 
+        <circle id="circ22" cx="272" cy="238" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(2,1)">
+          <title>Click for Radio B Button 2</title>
+        </circle>                 
+        <circle id="circ23" cx="429" cy="238" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(2,2)">
+          <title>Click for Radio B Button 3</title>
+        </circle>                 
+        <circle id="circ24" cx="586" cy="238" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(2,3)">
+          <title>Click for Radio B Button 4</title>
+        </circle>                 
+        <circle id="circ25" cx="743" cy="238" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(2,4)">
+          <title>Click for Radio B Button 5</title>
+        </circle>                 
+        <circle id="circ26" cx="900" cy="238" r="35" opacity="0" style="fill: rgb(255, 0, 0); cursor: pointer;" onclick="fireButton(2,5)">
+          <title>Click for Radio B Button 6</title>
+        </circle>
+        <text x="210" y="190" opacity="0.2" style="font-size: 3vw;" transform="rotate(-90) translate(-515 1145)" id="devicename"></text>                 
+    </svg>
+  </div>
+  <div class="grid-container" id="container">
+    <div class="title" id="configuration" style="display: none; background-color: #5a002c; color:white">Configuration</div>
+    <div style="display: none; grid-column-start: 1; grid-column-end: span 8" id="configPanel">
+      <label class="whiteText">Id of your device:</label>
+      <input type="text" id="myid" size="50">
+      <button onclick="updateId()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">IP-Address of your Controller:</label>
+      <input type="text" id="deviceIp" size="50">
+      <button onclick="findDevice()">
+        Find Device
+      </button>
+      <button onclick="updateIp()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Change your internal Labels:</label>
+      <input type="text" id="label1" size="10">
+      <input type="text" id="label2" size="10">
+      <input type="text" id="label3" size="10">
+      <input type="text" id="label4" size="10">
+      <input type="text" id="label5" size="10">
+      <input type="text" id="label6" size="10">
+      <button onclick="updateLabels()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Space to the left of the internal Labels for alignment:</label>
+      <input type="text" id="off1" size="5">
+      <input type="text" id="off2" size="5">
+      <input type="text" id="off3" size="5">
+      <input type="text" id="off4" size="5">
+      <input type="text" id="off5" size="5">
+      <input type="text" id="off6" size="5">
+      <button onclick="updatePosition()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Size of the Controller internal Labels:</label>
+      <input type="text" id="fs" size="5">
+      <button onclick="updateFontSize()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Color of the Controller internal Labels:</label>
+      <input id="fcol" type="text" size="10" data-coloris value="Darkgrey">
+      <button onclick="updateFontCol()">
+        Update
+      </button>
+      <br/>
+      <br/>
+      <label class="whiteText">Change in case of networking issues:</label>
+      <br/>
+      <input type="checkbox" id="forceHttp"><span>Use HTTP-Mode</span>
+      <br/>
+      <br/>
+      <span>Set custom Timeout (in Milliseconds, Default: 2000): </span><input type="text" id="socketTimeout" size="10">
+      <br/>
+      <br/>
+      <label class="whiteText">Use this Link/Storage to your Controller:</label>
+      <input id="genLink" type="text" size="180">
+      <button onclick="generateLink()">
+        Generate Link
+      </button>
+      <!-- <button onclick="storeLocal()">
+        Store in local storage
+      </button>
+      <button onclick="deleteLocal()">
+        Delete local storage
+      </button> -->
+      <button onclick="openUrl()">
+        Open from link
+      </button>
+      <!-- <button onclick="openStorage()">
+        Open from local storage
+      </button> -->
+      <p><div style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: white">copyright 2018 by Michael Mueller for qro.cz | All rights reserved -- wiki at <a href="https://hamparts.shop/blog" taget="blank">hamparts.shop/blog</a></div>
+      <!--copyright 2018 by Michael Müller. All rights reserved. This code is NOT open source. The provided functionality is only allowed to be used with qro.cz/hamparts.shop hardware. Violations of this license agreement will be prosecuted. -->  
+    </div>
+<!--S-->
+</div>
+</body>
+</html>
